@@ -1,6 +1,6 @@
 # Agentic RAG Application
 
-An intelligent retrieval-augmented generation (RAG) application powered by LangGraph and OpenAI. This application builds a conversational agent that can answer questions by retrieving relevant information from documents and generating accurate, context-aware responses.
+An intelligent retrieval-augmented generation (RAG) application powered by LangGraph and OpenAI. This application builds a conversational agent that can answer questions by retrieving relevant information from vector database chromaDB and generating accurate, context-aware responses.
 
 ## 🎯 Features
 
