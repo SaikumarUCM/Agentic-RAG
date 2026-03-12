@@ -46,7 +46,7 @@ An intelligent retrieval-augmented generation (RAG) application powered by LangG
 
    ```bash
    git clone <repository-url>
-   cd "AI /Agentic RAG Application"
+   cd "Agentic RAG Application"
    ```
 
 2. **Set up virtual environment**
