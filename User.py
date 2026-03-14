@@ -2,12 +2,12 @@
 from langchain_core.messages import HumanMessage
 from agent import agent
 
-messages = {
-    "messages": HumanMessage(content=" what is task decomposition in the context of AI agents?")
-}
+def User(prompt: str):
+    messages = {
+        "messages": HumanMessage(content=prompt)
+    }
 
-graph = agent()
-response = graph.invoke(messages)
+    graph = agent()
+    response = graph.invoke(messages)
 
-for message in response["messages"]:
-    message.pretty_print()
+    return response['messages'][1].content
