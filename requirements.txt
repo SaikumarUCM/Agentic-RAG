@@ -1,0 +1,30 @@
+# FastAPI / existing stack
+fastapi>=0.135.1
+uvicorn>=0.41.0
+
+# Streamlit UI
+streamlit>=1.35.0
+requests>=2.32.0
+
+# Airflow (install separately via official image; listed here for local dev)
+apache-airflow>=2.9.1
+
+# Document loaders
+langchain>=0.2.0
+langchain-community>=0.2.0
+pypdf>=4.0.0
+docx2txt>=0.8
+
+# Embeddings
+sentence-transformers>=3.0.0
+
+# Vector store
+qdrant-client>=1.9.0
+langchain-qdrant>=0.1.0
+
+# RAG / agent stack
+langchain-openai>=0.1.0
+langgraph>=0.1.0
+python-dotenv>=1.0.0
+selenium>=4.0.0
+unstructured>=0.14.0

@@ -1,2 +1,1 @@
-
-from .RAGAgent import agent
+from .rag_agent import agent
