@@ -10,12 +10,10 @@ x-airflow-common: &airflow-common
     AIRFLOW__API__AUTH_BACKENDS: airflow.api.auth.backend.basic_auth
     QDRANT_HOST: qdrant
     QDRANT_PORT: 6333
-    _PIP_ADDITIONAL_REQUIREMENTS: "pip install -r /requirements.txt"
   volumes:
     - ./dags:/opt/airflow/dags
     - ./pipeline:/opt/airflow/pipeline
     - ./storage:/opt/airflow/storage
-    - ./requirements.txt:/requirements.txt
   depends_on:
     - postgres
 
@@ -32,11 +30,12 @@ services:
   airflow-init:
     <<: *airflow-common
     command: >
-      bash -c "pip install -r /requirements.txt &&
-               airflow db migrate &&
-               airflow users create --username airflow --password airflow
-                 --firstname Air --lastname Flow --role Admin --email airflow@example.com"
+      bash -c "
+      airflow db init &&
+      airflow users create --username airflow --password airflow --firstname Air --lastname Flow --role Admin --email airflow@example.com
+      "
     restart: "no"
+
 
   airflow-webserver:
     <<: *airflow-common
@@ -61,7 +60,6 @@ services:
       - "6334:6334"
     volumes:
       - qdrant_data:/qdrant/storage
-
 
 volumes:
   postgres_data:

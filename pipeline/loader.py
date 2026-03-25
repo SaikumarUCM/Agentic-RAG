@@ -5,7 +5,7 @@ from langchain_community.document_loaders import (
 )
 
 
-def load_docs(file_path: str):
+def loader(file_path: str):
     ext = file_path.rsplit(".", 1)[-1].lower()
 
     if ext == "pdf":

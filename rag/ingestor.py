@@ -12,12 +12,12 @@ from .text_splitter import text_splitter
 load_dotenv()
 
 QDRANT_HOST = os.getenv("QDRANT_HOST")
-QDRANT_PORT = int(os.getenv("QDRANT_PORT"))
+QDRANT_PORT = os.getenv("QDRANT_PORT")
 COLLECTION_NAME = "articles"
 VECTOR_DIM = 1536  # text-embedding-3-small output dimension
 
 embeddings = OpenAIEmbeddings(model="text-embedding-3-small")
-_client = QdrantClient(host=QDRANT_HOST, port=QDRANT_PORT)
+_client = QdrantClient(host=QDRANT_HOST)
 
 
 def _ensure_collection():
