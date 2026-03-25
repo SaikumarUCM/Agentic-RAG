@@ -1,7 +1,8 @@
-version: "3.8"
-
 x-airflow-common: &airflow-common
-  image: apache/airflow:2.9.1
+  build:
+    context: .
+    dockerfile: Dockerfile.airflow
+  image: agenticrag-airflow:latest
   environment:
     AIRFLOW__CORE__EXECUTOR: LocalExecutor
     AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres/airflow
@@ -54,7 +55,7 @@ services:
       - airflow-init
 
   qdrant:
-    image: qdrant/qdrant:latest
+    image: qdrant/qdrant:v1.13.4
     ports:
       - "6333:6333"
       - "6334:6334"
