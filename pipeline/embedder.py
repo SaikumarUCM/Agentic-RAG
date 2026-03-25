@@ -10,8 +10,8 @@ def _get_model():
     return _model
 
 
-def embed_chunks(chunks) -> list:
+def embedder(chunks) -> list:
     model = _get_model()
     texts = [c.page_content for c in chunks]
     embeddings = model.encode(texts, show_progress_bar=True)
-    return embeddings
+    return embeddings.tolist()
