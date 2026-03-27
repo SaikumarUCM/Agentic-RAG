@@ -3,6 +3,7 @@ import requests
 import os
 
 UPLOAD_FOLDER = "storage/uploads"
+AIRFLOW_UPLOAD_FOLDER = "/opt/airflow/storage/uploads"  # path as seen inside Airflow container
 
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
@@ -12,6 +13,7 @@ uploaded_file = st.file_uploader("Upload document", type=["pdf", "txt", "docx"])
 
 if uploaded_file:
     path = os.path.join(UPLOAD_FOLDER, uploaded_file.name)
+    airflow_path = os.path.join(AIRFLOW_UPLOAD_FOLDER, uploaded_file.name)
 
     with open(path, "wb") as f:
         f.write(uploaded_file.getbuffer())
@@ -23,7 +25,7 @@ if uploaded_file:
 
         payload = {
             "conf": {
-                "file_path": path
+                "file_path": airflow_path
             }
         }
 

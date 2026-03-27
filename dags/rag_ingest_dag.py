@@ -19,6 +19,5 @@ with DAG(
 
     ingest_task = PythonOperator(
         task_id="build_index",
-        scheduke_interval=None,
         python_callable=run_build_index,
     )
