@@ -34,7 +34,7 @@ def store_vectors(chunks, embeddings):
     points = [
         PointStruct(
             id=i,
-            vector=emb.tolist(),
+            vector=emb,
             payload={"text": chunks[i].page_content, "source": chunks[i].metadata.get("source", "")},
         )
         for i, emb in enumerate(embeddings)
