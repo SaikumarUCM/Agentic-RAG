@@ -1,20 +1,12 @@
-import os
-
-from langchain_community.embeddings import HuggingFaceEmbeddings
 from langchain_core.tools.retriever import create_retriever_tool
 from langchain_qdrant import QdrantVectorStore
-from qdrant_client import QdrantClient
 
-QDRANT_HOST = os.getenv("QDRANT_HOST", "localhost")
-QDRANT_PORT = int(os.getenv("QDRANT_PORT", 6333))
-
-_embeddings = HuggingFaceEmbeddings(model_name="intfloat/e5-base")
-_client = QdrantClient(host=QDRANT_HOST, port=QDRANT_PORT)
+from rag.shared import client, embeddings, COLLECTION_NAME
 
 _vector_store = QdrantVectorStore(
-    client=_client,
-    collection_name="documents",
-    embedding=_embeddings,
+    client=client,
+    collection_name=COLLECTION_NAME,
+    embedding=embeddings,
     content_payload_key="text",
 )
 

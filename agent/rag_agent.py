@@ -3,7 +3,7 @@ from langgraph.graph import StateGraph, START, END
 from langgraph.graph import MessagesState
 from langchain_openai import ChatOpenAI
 
-from rag.retriever_tool import retriever_tool, _client, _embeddings
+from rag.retriever_tool import retriever_tool, client, embeddings
 from prompts import rag_answer_prompt
 
 load_dotenv()
@@ -17,8 +17,8 @@ SIMILARITY_THRESHOLD = 0.5
 def _router(state: MessagesState) -> str:
     content = state["messages"][-1].content
     user_query = content if isinstance(content, str) else " ".join(c["text"] if isinstance(c, dict) else c for c in content)
-    query_vector = _embeddings.embed_query(user_query)
-    results = _client.query_points(
+    query_vector = embeddings.embed_query(user_query)
+    results = client.query_points(
         collection_name="documents",
         query=query_vector,
         limit=1,
