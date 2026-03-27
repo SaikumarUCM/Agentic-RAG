@@ -1,10 +1,14 @@
+import json
+
 from fastapi import FastAPI
-from langchain_core.messages import HumanMessage
+from fastapi.responses import StreamingResponse
+from langchain_core.messages import HumanMessage, AIMessageChunk
 
 from agent import agent
 from app.schemas import PromptRequest
 
 app = FastAPI()
+_graph = agent()
 
 
 @app.get("/")
@@ -14,6 +18,14 @@ def root():
 
 @app.post("/chat")
 def chat(request: PromptRequest):
-    graph = agent()
-    response = graph.invoke({"messages": [HumanMessage(content=request.prompt)]})
-    return {"response": response["messages"][-1].content}
+    def token_stream():
+        for chunk, _ in _graph.stream(
+            {"messages": [HumanMessage(content=request.prompt)]},
+            stream_mode="messages",
+        ):
+            if isinstance(chunk, AIMessageChunk) and chunk.content:
+                yield f"data: {json.dumps({'token': chunk.content})}\n\n"
+
+        yield "data: [DONE]\n\n"
+
+    return StreamingResponse(token_stream(), media_type="text/event-stream")

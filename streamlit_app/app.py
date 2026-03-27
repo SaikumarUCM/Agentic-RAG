@@ -1,5 +1,7 @@
-import streamlit as st
+import json
+
 import requests
+import streamlit as st
 import os
 
 UPLOAD_FOLDER = "storage/uploads"
@@ -51,14 +53,27 @@ if st.button("Submit"):
     if not user_query.strip():
         st.warning("Please enter a query before submitting.")
     else:
-        r = requests.post(
-            "http://localhost:8000/chat",
-            json={"prompt": user_query}
-        )
+        st.markdown("**Answer:**")
+        response_placeholder = st.empty()
+        full_response = ""
 
-        if r.status_code == 200:
-            st.markdown("**Answer:**")
-            st.write(r.json().get("response", r.json()))
-        else:
-            st.error(f"Request failed: {r.status_code}")
-            st.write(r.text)
+        with requests.post(
+            "http://localhost:8000/chat",
+            json={"prompt": user_query},
+            stream=True,
+        ) as r:
+            if r.status_code == 200:
+                for line in r.iter_lines():
+                    if line:
+                        line = line.decode("utf-8")
+                        if line == "data: [DONE]":
+                            break
+                        if line.startswith("data: "):
+                            token = json.loads(line[6:])["token"]
+                            full_response += token
+                            response_placeholder.markdown(full_response + "▌")
+
+                response_placeholder.markdown(full_response)
+            else:
+                st.error(f"Request failed: {r.status_code}")
+                st.write(r.text)
