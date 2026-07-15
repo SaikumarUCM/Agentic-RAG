@@ -1,0 +1,144 @@
+openapi: 3.1.0
+info:
+  title: Agentic RAG API
+  description: |
+    Chat API for the Agentic RAG application.
+
+    The `/chat` endpoint streams tokens over Server-Sent Events (SSE) from a
+    LangGraph agent that can retrieve context from Qdrant.
+  version: 1.0.0
+  contact:
+    name: Agentic RAG
+
+servers:
+  - url: http://localhost:8000
+    description: Local development
+
+tags:
+  - name: health
+    description: Service health and discovery
+  - name: chat
+    description: RAG-backed conversational endpoints
+
+paths:
+  /:
+    get:
+      tags:
+        - health
+      summary: Root health check
+      description: Returns a simple message confirming the API is running.
+      operationId: getRoot
+      responses:
+        "200":
+          description: API is reachable
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RootResponse"
+              example:
+                message: Hello, World!
+
+  /chat:
+    post:
+      tags:
+        - chat
+      summary: Stream a chat response
+      description: |
+        Accepts a user prompt and streams the agent reply as Server-Sent Events
+        (`text/event-stream`).
+
+        Each event is either:
+        - `data: {"token": "<text>"}` — a content token from the model
+        - `data: [DONE]` — end of stream
+      operationId: postChat
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PromptRequest"
+            examples:
+              simple:
+                summary: Basic question
+                value:
+                  prompt: What is retrieval-augmented generation?
+      responses:
+        "200":
+          description: SSE token stream
+          content:
+            text/event-stream:
+              schema:
+                type: string
+                description: |
+                  Newline-delimited SSE payload. Example:
+
+                  ```
+                  data: {"token": "Retrieval"}
+                  data: {"token": "-augmented"}
+                  data: [DONE]
+                  ```
+              examples:
+                tokenStream:
+                  summary: Partial stream
+                  value: |
+                    data: {"token": "Hello"}
+
+                    data: {"token": "!"}
+
+                    data: [DONE]
+        "422":
+          description: Validation error (missing or invalid body)
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HTTPValidationError"
+
+components:
+  schemas:
+    PromptRequest:
+      type: object
+      required:
+        - prompt
+      properties:
+        prompt:
+          type: string
+          description: User message sent to the LangGraph RAG agent
+          minLength: 1
+          examples:
+            - What is retrieval-augmented generation?
+
+    RootResponse:
+      type: object
+      required:
+        - message
+      properties:
+        message:
+          type: string
+          examples:
+            - Hello, World!
+
+    ValidationError:
+      type: object
+      required:
+        - loc
+        - msg
+        - type
+      properties:
+        loc:
+          type: array
+          items:
+            anyOf:
+              - type: string
+              - type: integer
+        msg:
+          type: string
+        type:
+          type: string
+
+    HTTPValidationError:
+      type: object
+      properties:
+        detail:
+          type: array
+          items:
+            $ref: "#/components/schemas/ValidationError"
